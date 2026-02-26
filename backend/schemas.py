@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+# import models if needed using relative import
+from . import models
 from datetime import date, time
 
 class BookingCreate(BaseModel):
