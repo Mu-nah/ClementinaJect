@@ -22,7 +22,7 @@ app = FastAPI(title="Bookings App")
 
 # --- CORS ---
 # Allow localhost for dev + your Render URL for production
-frontend_url = os.environ.get("FRONTEND_URL", "*")  # optionally set via environment variable
+frontend_url = os.environ.get("FRONTEND_URL", "*")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", frontend_url],
@@ -31,22 +31,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Serve React frontend ---
-frontend_build = os.path.join(os.path.dirname(__file__), "../frontend/build")
-if os.path.exists(frontend_build):
-    app.mount("/static", StaticFiles(directory=os.path.join(frontend_build, "static")), name="static")
+# --- Serve Vite React frontend ---
+frontend_dist = os.path.join(os.path.dirname(__file__), "../frontend/dist")
+if os.path.exists(frontend_dist):
+    # Serve static assets
+    app.mount("/static", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="static")
 
     @app.get("/", include_in_schema=False)
     def serve_index():
-        return FileResponse(os.path.join(frontend_build, "index.html"))
+        return FileResponse(os.path.join(frontend_dist, "index.html"))
 
     @app.get("/{full_path:path}", include_in_schema=False)
     def serve_react(full_path: str):
-        # Serve React index.html for all unmatched routes (SPA routing)
-        index_file = os.path.join(frontend_build, "index.html")
+        # Serve index.html for all unmatched routes (SPA)
+        index_file = os.path.join(frontend_dist, "index.html")
         if os.path.exists(index_file):
             return FileResponse(index_file)
-        return {"message": "React build not found."}
+        return {"message": "React dist not found."}
 
 # --- API Routes ---
 @app.post("/bookings/")
