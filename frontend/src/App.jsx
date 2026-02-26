@@ -11,9 +11,9 @@ import ScrollToTop from "./components/ScrollToTop"
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <Navbar />
       <Routes>
-        <ScrollToTop />
         <Route path="/" element={<Home />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/about" element={<About />} />
