@@ -46,7 +46,6 @@ export default function Booking() {
         time: "",
         notes: ""
       })
-
     } catch (error) {
       alert("Error submitting booking.")
       setLoading(false)
@@ -56,9 +55,9 @@ export default function Booking() {
   return (
     <div className="bg-gray-50 min-h-screen">
 
-      {/* Hero Section */}
-      <section className="bg-black text-white py-20 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold">
+      {/* HERO */}
+      <section className="bg-black text-white py-20 px-6 text-center">
+        <h1 className="text-4xl sm:text-5xl font-bold">
           Contact & Consultation
         </h1>
         <p className="mt-4 text-gray-400 text-lg">
@@ -66,13 +65,13 @@ export default function Booking() {
         </p>
       </section>
 
-      {/* Main Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-16">
+      {/* MAIN CONTENT */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-20 grid lg:grid-cols-2 gap-12">
 
         {/* FORM */}
-        <div className="bg-white p-10 rounded-2xl shadow-xl">
+        <div className="bg-white p-6 sm:p-10 rounded-3xl shadow-xl">
 
-          <h2 className="text-3xl font-bold mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6">
             Schedule a Consultation
           </h2>
 
@@ -82,7 +81,7 @@ export default function Booking() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
 
             <input
               name="name"
@@ -117,7 +116,8 @@ export default function Booking() {
               <option>Relocation Support</option>
             </select>
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* Date & Time */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
                 type="date"
                 name="date"
@@ -149,7 +149,7 @@ export default function Booking() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white px-6 py-4 rounded-xl font-semibold transition shadow-md hover:shadow-lg"
+              className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white px-6 py-4 rounded-xl font-semibold transition shadow-md hover:shadow-lg"
             >
               {loading ? "Scheduling..." : "Schedule Consultation"}
             </button>
@@ -158,45 +158,45 @@ export default function Booking() {
         </div>
 
         {/* CONTACT INFO */}
-        <div className="bg-black text-white p-10 rounded-2xl shadow-xl">
+        <div className="bg-black text-white p-6 sm:p-10 rounded-3xl shadow-xl flex flex-col justify-between">
 
-          <h3 className="text-2xl font-bold mb-10">
-            Get In Touch
-          </h3>
+          <div>
+            <h3 className="text-2xl font-bold mb-8">
+              Get In Touch
+            </h3>
 
-          <div className="space-y-8">
+            <div className="space-y-8">
 
-            <div className="flex items-start gap-4">
-              <FaMapMarkerAlt className="text-orange-500 mt-1" size={20}/>
-              <div>
-                <p className="text-gray-400 text-sm">Address</p>
-                <p>Abuja, Nigeria</p>
+              <div className="flex items-start gap-4">
+                <FaMapMarkerAlt className="text-orange-500 mt-1" />
+                <div>
+                  <p className="text-gray-400 text-sm">Address</p>
+                  <p>Abuja, Nigeria</p>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-start gap-4">
-              <FaPhoneAlt className="text-orange-500 mt-1" size={20}/>
-              <div>
-                <p className="text-gray-400 text-sm">Phone</p>
-                <p>+234 XXX XXX XXXX</p>
+              <div className="flex items-start gap-4">
+                <FaPhoneAlt className="text-orange-500 mt-1" />
+                <div>
+                  <p className="text-gray-400 text-sm">Phone</p>
+                  <p>+234 XXX XXX XXXX</p>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-start gap-4">
-              <FaEnvelope className="text-orange-500 mt-1" size={20}/>
-              <div>
-                <p className="text-gray-400 text-sm">Email</p>
-                <p>info@everythingabuja.com</p>
+              <div className="flex items-start gap-4">
+                <FaEnvelope className="text-orange-500 mt-1" />
+                <div>
+                  <p className="text-gray-400 text-sm">Email</p>
+                  <p>info@everythingabuja.com</p>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
 
           {/* Socials */}
           <div className="mt-12">
-            <p className="text-gray-400 mb-4">
-              Follow Us
-            </p>
+            <p className="text-gray-400 mb-4">Follow Us</p>
 
             <div className="flex gap-5">
 
