@@ -1,10 +1,8 @@
-from .database import Base  # instead of 'from database import Base'
-from sqlalchemy import Column, Integer, String, Date  # your existing imports
-from datetime import date, time
+from .database import Base
+from sqlalchemy import Column, Integer, String, Date, Time
 
 class Booking(Base):
     __tablename__ = "bookings"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     email = Column(String)
