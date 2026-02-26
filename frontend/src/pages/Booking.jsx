@@ -34,7 +34,7 @@ export default function Booking() {
     setLoading(true)
 
     try {
-      await axios.post("http://127.0.0.1:8000/bookings/", formData)
+      await axios.post("/bookings/", formData)
       setSuccess(true)
       setLoading(false)
 
