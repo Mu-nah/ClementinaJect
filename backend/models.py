@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Date, Time
-from database import Base
+from .database import Base  # instead of 'from database import Base'
+from sqlalchemy import Column, Integer, String  # your existing imports
 
 class Booking(Base):
     __tablename__ = "bookings"
