@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom"
 import logo from "../assets/logo.png"
-import { 
-  FaFacebookF, 
-  FaInstagram, 
-  FaLinkedinIn, 
-  FaWhatsapp 
+import {
+  FaFacebookF,
+  FaInstagram
 } from "react-icons/fa"
 
 export default function Footer() {
@@ -51,7 +49,8 @@ export default function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li>Abuja, Nigeria</li>
               <li>info@everythingabuja.com</li>
-              <li>+234 000 000 0000</li>
+              <li>everythingabujaserviceltd@gmail.com</li>
+              <li>09025478688</li>
             </ul>
           </div>
 
@@ -64,31 +63,21 @@ export default function Footer() {
             <div className="flex gap-4">
 
               <a
-                href="#"
+                href="https://facebook.com/everythingabujaservicelimited"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-[#1877F2] p-3 rounded-full hover:scale-110 transition transform"
               >
                 <FaFacebookF className="text-white text-lg" />
               </a>
 
               <a
-                href="#"
+                href="https://instagram.com/everythingabujaserviceltd"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-3 rounded-full hover:scale-110 transition transform"
               >
                 <FaInstagram className="text-white text-lg" />
-              </a>
-
-              <a
-                href="#"
-                className="bg-[#0A66C2] p-3 rounded-full hover:scale-110 transition transform"
-              >
-                <FaLinkedinIn className="text-white text-lg" />
-              </a>
-
-              <a
-                href="#"
-                className="bg-[#25D366] p-3 rounded-full hover:scale-110 transition transform"
-              >
-                <FaWhatsapp className="text-white text-lg" />
               </a>
 
             </div>
@@ -99,7 +88,7 @@ export default function Footer() {
 
         {/* Divider */}
         <div className="border-t border-gray-800 mt-16 pt-6 text-center text-gray-500 text-sm">
-          © {new Date().getFullYear()} Everything Abuja Limited. All rights reserved.
+          &copy; {new Date().getFullYear()} Everything Abuja Limited. All rights reserved.
         </div>
 
       </div>
