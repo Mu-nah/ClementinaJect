@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import text, inspect
 from .database import engine, SessionLocal, Base
 from . import models
 import os
@@ -37,8 +37,8 @@ def ensure_booking_columns():
     }
 
     with engine.begin() as connection:
-        columns = connection.execute(text("PRAGMA table_info(bookings)")).fetchall()
-        existing = {row[1] for row in columns}
+        inspector = inspect(connection)
+        existing = {column["name"] for column in inspector.get_columns("bookings")}
 
         for column_name, column_type in required_columns.items():
             if column_name not in existing:
