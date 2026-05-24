@@ -34,14 +34,14 @@ export default function About() {
         style={{ minHeight: "75vh" }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-900 to-orange-950" />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 py-28 text-center">
-          <span className="hero-t1 inline-block mb-5 text-xs font-semibold uppercase tracking-widest text-orange-400 border border-orange-400/40 rounded-full px-4 py-1.5">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-16 md:py-28 text-center">
+          <span className="hero-t1 inline-block mb-4 md:mb-5 text-xs font-semibold uppercase tracking-widest text-orange-400 border border-orange-400/40 rounded-full px-4 py-1.5">
             Who We Are
           </span>
-          <h1 className="hero-t2 text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
+          <h1 className="hero-t2 text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight">
             We Have Been Here<br /><span className="text-orange-500">Long Enough to Know</span>
           </h1>
-          <p className="hero-t3 mt-6 text-gray-200 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="hero-t3 mt-5 md:mt-6 text-gray-200 text-base md:text-xl max-w-2xl mx-auto leading-relaxed">
             Every neighbourhood, every shortcut, every trusted landlord. We know this city
             and we know what it takes to help someone feel at home in it.
           </p>

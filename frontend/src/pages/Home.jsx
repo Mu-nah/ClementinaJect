@@ -63,19 +63,19 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-900 to-orange-950" />
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-28">
-          <span className="hero-t1 inline-block mb-5 text-xs font-semibold uppercase tracking-widest text-orange-400 border border-orange-400/40 rounded-full px-4 py-1.5">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20 md:py-28">
+          <span className="hero-t1 inline-block mb-4 md:mb-5 text-xs font-semibold uppercase tracking-widest text-orange-400 border border-orange-400/40 rounded-full px-4 py-1.5">
             Abuja's Trusted Relocation Partner
           </span>
-          <h1 className="hero-t2 text-5xl md:text-7xl font-extrabold leading-tight max-w-3xl">
+          <h1 className="hero-t2 text-3xl sm:text-5xl md:text-7xl font-extrabold leading-tight max-w-3xl">
             Making Abuja<br />Feel Like <span className="text-orange-500">Home</span>
           </h1>
-          <p className="hero-t3 mt-6 text-lg text-gray-300 max-w-2xl leading-relaxed">
+          <p className="hero-t3 mt-5 md:mt-6 text-base md:text-lg text-gray-300 max-w-2xl leading-relaxed">
             We help individuals, families and professionals relocate to Abuja with ease.
             Airport coordination, accommodation, relocation support and concierge services.
             We cover it all.
           </p>
-          <div className="hero-t4 mt-10 flex flex-wrap gap-4">
+          <div className="hero-t4 mt-8 md:mt-10 flex flex-wrap gap-4">
             <Link
               to="/booking"
               className="bg-orange-600 hover:bg-orange-700 transition-all duration-300 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-orange-600/40 hover:shadow-2xl"
@@ -114,13 +114,13 @@ export default function Home() {
       </section>
 
       {/* ABOUT PREVIEW */}
-      <section ref={aboutRef} className="py-24 border-t border-gray-800">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-14 items-center">
+      <section ref={aboutRef} className="py-16 md:py-24 border-t border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-8 md:gap-14 items-center">
           <div className={`reveal-left ${aboutVisible ? "visible" : ""}`}>
             <img
               src={aboutImg}
               alt="About Everything Abuja"
-              className="rounded-3xl w-full h-[420px] object-cover shadow-2xl"
+              className="rounded-3xl w-full h-52 sm:h-64 md:h-[420px] object-cover shadow-2xl"
             />
           </div>
           <div

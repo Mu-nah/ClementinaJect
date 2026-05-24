@@ -10,14 +10,14 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-black/95 backdrop-blur-md text-white shadow-xl">
-      <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4 flex justify-between items-center">
 
         {/* Logo */}
         <Link to="/" className="flex items-center" onClick={closeMenu}>
           <img
             src={logo}
             alt="Everything Abuja Logo"
-            className="h-20 md:h-28 w-auto object-contain transition-transform duration-300 hover:scale-105"
+            className="h-10 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 hover:scale-105"
           />
         </Link>
 

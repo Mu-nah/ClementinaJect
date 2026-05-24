@@ -15,11 +15,15 @@
   50%       { transform: translateY(7px); }
 }
 
-/* Hero staggered text — fires on mount */
-.hero-t1 { animation: fadeUp 0.65s ease 0.1s forwards; opacity: 0; }
-.hero-t2 { animation: fadeUp 0.65s ease 0.3s forwards; opacity: 0; }
-.hero-t3 { animation: fadeUp 0.65s ease 0.5s forwards; opacity: 0; }
-.hero-t4 { animation: fadeUp 0.65s ease 0.7s forwards; opacity: 0; }
+/* Hero staggered text — always visible; animated when motion is allowed */
+.hero-t1, .hero-t2, .hero-t3, .hero-t4 { opacity: 1; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-t1 { animation: fadeUp 0.65s ease 0.1s both; }
+  .hero-t2 { animation: fadeUp 0.65s ease 0.3s both; }
+  .hero-t3 { animation: fadeUp 0.65s ease 0.5s both; }
+  .hero-t4 { animation: fadeUp 0.65s ease 0.7s both; }
+}
 
 /* Hero background slow zoom */
 .hero-bg { animation: kenBurns 14s ease-in-out infinite alternate; }
