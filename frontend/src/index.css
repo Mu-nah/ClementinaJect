@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes kenBurns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.07); }
+}
+
+@keyframes bounceDot {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(7px); }
+}
+
+/* Hero staggered text — fires on mount */
+.hero-t1 { animation: fadeUp 0.65s ease 0.1s forwards; opacity: 0; }
+.hero-t2 { animation: fadeUp 0.65s ease 0.3s forwards; opacity: 0; }
+.hero-t3 { animation: fadeUp 0.65s ease 0.5s forwards; opacity: 0; }
+.hero-t4 { animation: fadeUp 0.65s ease 0.7s forwards; opacity: 0; }
+
+/* Hero background slow zoom */
+.hero-bg { animation: kenBurns 14s ease-in-out infinite alternate; }
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s ease, transform 0.75s ease, box-shadow 0.3s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-38px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(38px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* Animated scroll dot */
+.scroll-dot { animation: bounceDot 1.4s ease-in-out infinite; }

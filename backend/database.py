@@ -1,18 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from motor.motor_asyncio import AsyncIOMotorClient
+from dotenv import load_dotenv
 import os
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./bookings.db")
+load_dotenv()
 
-# Fix Render's postgres:// to postgresql:// (SQLAlchemy requirement)
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+MONGODB_URL   = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
+DATABASE_NAME = os.environ.get("DATABASE_NAME", "everythingabuja")
 
-# SQLite needs check_same_thread, PostgreSQL doesn't
-if DATABASE_URL.startswith("sqlite"):
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-else:
-    engine = create_engine(DATABASE_URL)
-
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
+client = AsyncIOMotorClient(MONGODB_URL)
+db     = client[DATABASE_NAME]

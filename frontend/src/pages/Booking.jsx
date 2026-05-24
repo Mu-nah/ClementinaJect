@@ -6,13 +6,42 @@ import {
   FaPhoneAlt,
   FaEnvelope,
   FaMapMarkerAlt,
-  FaChevronDown
+  FaChevronDown,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaTimes
 } from "react-icons/fa"
+
+function Toast({ type, message, onClose }) {
+  if (!message) return null
+  const isSuccess = type === "success"
+  return (
+    <div className={`fixed top-6 right-6 z-50 flex items-start gap-3 rounded-2xl px-5 py-4 shadow-2xl text-white max-w-sm
+      ${isSuccess ? "bg-green-600" : "bg-red-600"}
+      animate-[fadeUp_0.4s_ease_forwards]`}
+    >
+      {isSuccess
+        ? <FaCheckCircle className="mt-0.5 shrink-0 text-lg" />
+        : <FaTimesCircle className="mt-0.5 shrink-0 text-lg" />
+      }
+      <p className="text-sm leading-relaxed flex-1">{message}</p>
+      <button onClick={onClose} className="ml-2 opacity-70 hover:opacity-100 transition">
+        <FaTimes className="text-sm" />
+      </button>
+    </div>
+  )
+}
 
 export default function Booking() {
   const AIRPORT_CORDINATION = "Airport Cordination"
   const SHORT_STAY_ACCOMODATION = "Short Stay Accomodation"
   const [formResetKey, setFormResetKey] = useState(0)
+  const [toast, setToast] = useState({ type: "", message: "" })
+
+  const showToast = (type, message) => {
+    setToast({ type, message })
+    setTimeout(() => setToast({ type: "", message: "" }), 5000)
+  }
 
   const [formData, setFormData] = useState({
     name: "",
@@ -33,7 +62,6 @@ export default function Booking() {
   })
 
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -88,10 +116,11 @@ export default function Booking() {
         payload.append("company_letterhead_attachment", formData.company_letterhead_attachment)
       }
 
-      await axios.post("/bookings/", payload, {
+      const apiUrl = import.meta.env.VITE_API_URL || ""
+      await axios.post(`${apiUrl}/bookings/`, payload, {
         headers: { "Content-Type": "multipart/form-data" }
       })
-      setSuccess(true)
+      showToast("success", "Booking submitted! We will be in touch with you shortly.")
       setLoading(false)
 
       setFormData({
@@ -113,7 +142,7 @@ export default function Booking() {
       })
       setFormResetKey((prev) => prev + 1)
     } catch (error) {
-      alert("Error submitting booking.")
+      showToast("error", "Something went wrong. Please try again or contact us directly.")
       setLoading(false)
     }
   }
@@ -132,6 +161,7 @@ export default function Booking() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <Toast type={toast.type} message={toast.message} onClose={() => setToast({ type: "", message: "" })} />
       <section className="bg-gradient-to-r from-black via-zinc-900 to-orange-950 text-white">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16">
           <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">Contact & Book Us</h1>
@@ -149,11 +179,7 @@ export default function Booking() {
               <h2 className="mt-1 text-2xl font-bold text-gray-900">Book Us</h2>
             </div>
 
-            {success && (
-              <div className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                Booking successful! We&apos;ll contact you shortly.
-              </div>
-            )}
+
 
             <form key={formResetKey} onSubmit={handleSubmit} className="mt-6 space-y-6">
               <div className={blockClass}>

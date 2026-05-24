@@ -1,6 +1,8 @@
 fastapi
 uvicorn
-sqlalchemy
-databases
+motor
+pymongo
+dnspython
 python-multipart
-psycopg2-binary
+python-dotenv
+cloudinary

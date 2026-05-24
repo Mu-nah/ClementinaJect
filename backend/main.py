@@ -1,75 +1,30 @@
-# backend/main.py
 from datetime import date
-from uuid import uuid4
-from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from sqlalchemy.orm import Session
-from sqlalchemy import text, inspect
-from .database import engine, SessionLocal, Base
-from . import models
+from database import db
+import cloudinary
+import cloudinary.uploader
 import os
 import re
-import shutil
 
-# --- Database setup ---
-Base.metadata.create_all(bind=engine)
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+)
 
-def ensure_booking_columns():
-    required_columns = {
-        "phone": "VARCHAR",
-        "credential_type": "VARCHAR",
-        "credential_attachment_path": "VARCHAR",
-        "resume_attachment_path": "VARCHAR",
-        "id_number": "VARCHAR",
-        "nin": "VARCHAR",
-        "voters_card": "VARCHAR",
-        "passport": "VARCHAR",
-        "next_of_kin_name": "VARCHAR",
-        "next_of_kin_phone": "VARCHAR",
-        "next_of_kin_address": "VARCHAR",
-        "next_of_kin_relationship": "VARCHAR",
-        "sponsorship_type": "VARCHAR",
-        "cv_link": "VARCHAR",
-        "company_letterhead_link": "VARCHAR",
-        "company_letterhead_attachment_path": "VARCHAR",
-    }
+def upload_file(file: UploadFile, folder: str) -> str:
+    result = cloudinary.uploader.upload(
+        file.file,
+        folder=f"everythingabuja/{folder}",
+        resource_type="auto",
+    )
+    return result["secure_url"]
 
-    with engine.begin() as connection:
-        inspector = inspect(connection)
-        existing = {column["name"] for column in inspector.get_columns("bookings")}
+app = FastAPI(title="Everything Abuja Bookings")
 
-        for column_name, column_type in required_columns.items():
-            if column_name not in existing:
-                connection.execute(
-                    text(f"ALTER TABLE bookings ADD COLUMN {column_name} {column_type}")
-                )
-
-ensure_booking_columns()
-
-UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploads")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-def save_upload(file: UploadFile, prefix: str) -> str:
-    ext = os.path.splitext(file.filename or "")[1]
-    filename = f"{prefix}_{uuid4().hex}{ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    return file_path
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# --- FastAPI app ---
-app = FastAPI(title="Bookings App")
-
-# --- CORS ---
 frontend_url = os.environ.get("FRONTEND_URL", "*")
 app.add_middleware(
     CORSMiddleware,
@@ -79,9 +34,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- API Routes FIRST ---
+
+@app.get("/health", include_in_schema=False)
+async def health():
+    return {"status": "ok"}
+
+
 @app.post("/bookings/")
-def create_booking(
+async def create_booking(
     name: str = Form(...),
     phone: str = Form(...),
     email: str = Form(...),
@@ -97,80 +57,66 @@ def create_booking(
     credential_attachment: UploadFile = File(...),
     resume_attachment: UploadFile | None = File(None),
     company_letterhead_attachment: UploadFile | None = File(None),
-    db: Session = Depends(get_db)
 ):
     try:
         parsed_date = date.fromisoformat(date_value)
     except ValueError:
         raise HTTPException(status_code=422, detail="Invalid date format. Use YYYY-MM-DD.")
 
-    email_pattern = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
-    phone_pattern = r"^\d{7,15}$"
-
-    if re.fullmatch(email_pattern, email.strip()) is None:
-        raise HTTPException(status_code=422, detail="Invalid email address format.")
-    if re.fullmatch(phone_pattern, phone.strip()) is None:
-        raise HTTPException(status_code=422, detail="Phone number must contain only digits.")
-    if re.fullmatch(phone_pattern, next_of_kin_phone.strip()) is None:
+    if not re.fullmatch(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email.strip()):
+        raise HTTPException(status_code=422, detail="Invalid email address.")
+    if not re.fullmatch(r"^\d{7,15}$", phone.strip()):
+        raise HTTPException(status_code=422, detail="Phone must contain only digits.")
+    if not re.fullmatch(r"^\d{7,15}$", next_of_kin_phone.strip()):
         raise HTTPException(status_code=422, detail="Next of kin phone must contain only digits.")
     if parsed_date < date.today():
-        raise HTTPException(status_code=422, detail="Prospective arrival date cannot be in the past.")
+        raise HTTPException(status_code=422, detail="Arrival date cannot be in the past.")
 
-    requires_company_letterhead = (
-        service == "Short Stay Accomodation" and sponsorship_type == "company"
-    )
-    requires_resume = (
-        service != "Airport Cordination" and service != "Short Stay Accomodation"
-    )
+    requires_resume = service not in ("Airport Cordination", "Short Stay Accomodation")
+    requires_letterhead = service == "Short Stay Accomodation" and sponsorship_type == "company"
+
     if requires_resume and resume_attachment is None:
-        raise HTTPException(
-            status_code=422,
-            detail="Resume attachment is required for the selected service."
-        )
-    if requires_company_letterhead and company_letterhead_attachment is None:
-        raise HTTPException(
-            status_code=422,
-            detail="Company letterhead attachment is required for company-sponsored short stay."
-        )
+        raise HTTPException(status_code=422, detail="Resume attachment is required for this service.")
+    if requires_letterhead and company_letterhead_attachment is None:
+        raise HTTPException(status_code=422, detail="Company letterhead is required for company-sponsored short stay.")
 
-    credential_attachment_path = save_upload(credential_attachment, "credential")
-    resume_attachment_path = None
-    if resume_attachment is not None:
-        resume_attachment_path = save_upload(resume_attachment, "resume")
-    company_letterhead_attachment_path = None
-    if company_letterhead_attachment is not None:
-        company_letterhead_attachment_path = save_upload(
-            company_letterhead_attachment,
-            "company_letterhead"
-        )
+    credential_path = upload_file(credential_attachment, "credentials")
+    resume_path = upload_file(resume_attachment, "resumes") if resume_attachment else None
+    letterhead_path = upload_file(company_letterhead_attachment, "letterheads") if company_letterhead_attachment else None
 
-    db_booking = models.Booking(
-        name=name,
-        phone=phone,
-        email=email,
-        service=service,
-        date=parsed_date,
-        notes=notes,
-        credential_type=credential_type,
-        credential_attachment_path=credential_attachment_path,
-        resume_attachment_path=resume_attachment_path,
-        next_of_kin_name=next_of_kin_name,
-        next_of_kin_phone=next_of_kin_phone,
-        next_of_kin_address=next_of_kin_address,
-        next_of_kin_relationship=next_of_kin_relationship,
-        sponsorship_type=sponsorship_type,
-        company_letterhead_attachment_path=company_letterhead_attachment_path,
-    )
-    db.add(db_booking)
-    db.commit()
-    db.refresh(db_booking)
-    return db_booking
+    booking = {
+        "name": name,
+        "phone": phone,
+        "email": email,
+        "service": service,
+        "date": date_value,
+        "notes": notes,
+        "credential_type": credential_type,
+        "credential_attachment_path": credential_path,
+        "resume_attachment_path": resume_path,
+        "next_of_kin_name": next_of_kin_name,
+        "next_of_kin_phone": next_of_kin_phone,
+        "next_of_kin_address": next_of_kin_address,
+        "next_of_kin_relationship": next_of_kin_relationship,
+        "sponsorship_type": sponsorship_type,
+        "company_letterhead_attachment_path": letterhead_path,
+    }
+
+    result = await db.bookings.insert_one(booking)
+    booking["_id"] = str(result.inserted_id)
+    return booking
+
 
 @app.get("/bookings/")
-def get_bookings(db: Session = Depends(get_db)):
-    return db.query(models.Booking).all()
+async def get_bookings():
+    bookings = []
+    async for booking in db.bookings.find():
+        booking["_id"] = str(booking["_id"])
+        bookings.append(booking)
+    return bookings
 
-# --- Serve React frontend LAST ---
+
+# Serve React frontend (production)
 frontend_dist = os.path.join(os.path.dirname(__file__), "../frontend/dist")
 if os.path.exists(frontend_dist):
     app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
@@ -181,10 +127,7 @@ if os.path.exists(frontend_dist):
 
     @app.get("/{full_path:path}", include_in_schema=False)
     def serve_react(full_path: str):
-        # Serve actual files from dist if they exist
         file_path = os.path.join(frontend_dist, full_path)
         if os.path.exists(file_path) and os.path.isfile(file_path):
             return FileResponse(file_path)
-        # Otherwise serve index.html for SPA routing
         return FileResponse(os.path.join(frontend_dist, "index.html"))
-
